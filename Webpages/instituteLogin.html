@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<Html>
+
+<head>
+    <title>
+        Login Page
+    </title>
+    <style>
+        body {
+            background-color: lightskyblue;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        input[type="submit"] {
+            height: 50px;
+            width: 150px;
+        }
+        form{
+            margin-top: 70;
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+    <br>
+    <form action="http://localhost:4000/api/instituteLogin" method="post">
+
+        <label> Email </label>
+        <input type="text" name="email" size="15" /> <br> <br>
+        <label> Password </label>
+        <input type="password" name="password" size="15" /> <br> <br>
+        <div class="btn">
+            <input type="submit" value="Submit" />
+        </div>
+    </form>
+</body>
+
+</html>
