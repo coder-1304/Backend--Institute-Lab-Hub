@@ -3,8 +3,10 @@ import registerController from '../controllers/auth/Learner/registerController.j
 import loginController from '../controllers/auth/Learner/loginController.js';
 import instituteRegisterController from '../controllers/auth/Institute/registerController.js';
 import instituteLoginController from '../controllers/auth/Institute/loginController.js';
+import labController from '../controllers/auth/Labs/labController.js';
 const router = express.Router();
 import auth from '../middlewares/auth.js';
+import instituteAuth from '../middlewares/instituteAuth.js';
 
 router.post('/register', registerController.register);
 router.post('/login', loginController.login);
@@ -13,6 +15,10 @@ router.post('/register/verifyOTP',registerController.verifyOTP);
 
 router.post('/instituteRegister', instituteRegisterController.register);
 router.post('/instituteLogin', instituteLoginController.login);
+
+//labs
+router.post('/addLab',instituteAuth, labController.addLab);
+router.get('/getAllLabs', labController.getAllLabs);
 
 
 router.post('/logout', loginController.logout);
