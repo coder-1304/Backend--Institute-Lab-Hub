@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booked Learners</title>
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            width: 300px;
+            display: inline-block;
+        }
+
+        .card h2 {
+            margin: 0;
+        }
+
+        .card p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cards-container"></div>
+    <script>
+        const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        const labId = document.cookie.replace(/(?:(?:^|.*;\s*)labId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        fetch('http://localhost:4000/api//institute/labs/bookedLearners', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                labId: labId
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const cardsContainer = document.getElementById('cards-container');
+                data.bookings.forEach(booking => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    const cardContent = `
+        <h2>${booking.name}</h2>
+        <p>Email: ${booking.email}</p>
+        <p>Phone: ${booking.phone}</p>
+        <p>Gender: ${booking.gender}</p>
+        <p>Booking ID: ${booking.bookingId}</p>
+      `;
+                    card.innerHTML = cardContent;
+                    cardsContainer.appendChild(card);
+                });
+            })
+            .catch(error => console.error(error));
+
+    </script>
+</body>
+
+</html>

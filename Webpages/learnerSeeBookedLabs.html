@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booked Labs</title>
+    <style>
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            width: 300px;
+            margin: 20px;
+            padding: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            margin: 0;
+        }
+
+        .card p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card-container">
+    </div>
+
+    <script>
+        const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:4000/api/learner/seeBookedLabs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token: token }) // Replace with your request body
+                });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        const renderCards = async () => {
+            const data = await fetchData();
+            const cardContainer = document.querySelector('.card-container');
+            data.forEach(item => {
+                const { bookingId, phone, labName, description, instituteName, location, available, fees, date, country } = item;
+                const card = `
+      <div class="card">
+        <h3>${labName}</h3>
+        <p>Booking ID: ${bookingId}</p>
+        <p>${description}</p>
+        <p>${instituteName} - ${location}</p>
+        <p>Available: ${available}</p>
+        <p>Fees: ${fees}</p>
+        <p>Date: ${date ? date : 'Not available'}</p>
+        <p>Country: ${country}</p>
+      </div>
+    `;
+                cardContainer.insertAdjacentHTML('beforeend', card);
+            });
+        };
+
+        renderCards();
+
+    </script>
+</body>
+
+</html>

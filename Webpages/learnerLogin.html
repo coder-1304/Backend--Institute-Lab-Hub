@@ -26,16 +26,44 @@
 <body>
     <br>
     <br>
-    <form action="http://localhost:4000/api/login" method="post">
+    <form>
 
         <label> Email </label>
-        <input type="text" name="email" size="15" /> <br> <br>
+        <input type="text" name="email" id="email" size="15" /> <br> <br>
         <label> Password </label>
-        <input type="password" name="password" size="15" /> <br> <br>
+        <input type="password" name="password" id="password" size="15" /> <br> <br>
         <div class="btn">
-            <input type="submit" value="Submit" />
+            <!-- <input type="bu" value="Submit" /> -->
+            <button type="button" onclick="register()">Login</button>
         </div>
     </form>
+
+    <script>
+        function register() {
+            const url = "http://localhost:4000/api/login";
+            const data = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+            };
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if(data.success==true){
+                        document.cookie = `token=${data.token};  path=/`;
+                        window.location.href='./showAllLabs.html'
+                    }
+                })
+                .catch((error) => console.error(error));
+
+        }
+    </script>
 </body>
 
 </html>

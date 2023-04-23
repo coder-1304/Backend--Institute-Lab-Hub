@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<Html>
+
+<head>
+    <title>
+        Registration Page
+    </title>
+    <style>
+        body {
+            background-color: lightskyblue;
+            display: flex;
+            flex-direction: column;
+            /* justify-content: center; */
+            text-align: center;
+        }
+
+        input[type="submit"] {
+            height: 50px;
+            width: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="labName"></h1> 
+    <h1 id="fees"></h1> 
+    <form>
+        <label> First Name </label>
+        <input type="text" name="fName" id="fName" size="15" /> <br> <br>
+        <label> Last Name </label>
+        <input type="text" name="lName" id="lName" size="15" /> <br> <br>
+        <label> Email </label>
+        <input type="text" name="email" id="email" size="15" /> <br> <br>
+        <label> Phone </label>
+        <input type="text" name="phone" id="phone" size="15" /> <br> <br>
+        <!-- gender -->
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select> <br> <br>
+
+        <!-- <label> Institute </label>
+        <input type="text" name="institute" id="institute"/> <br> <br>
+
+        <label> Course </label>
+        <input type="text" name="course" id="course"/> <br> <br>
+
+        <label> Password </label>
+        <input type="password" name="password"  id="password" size="15" /> <br> <br>
+        <label> Repeat Password </label>
+        <input type="password" name="repeatPassword" id="repeatPassword" size="15" /> <br> <br> -->
+        <br>
+        <br>
+        <div class="btn">
+            <input type="button" value="Register" onclick="register()" />
+        </div>
+    </form>
+
+
+
+
+    <script>
+        const labId = document.cookie.replace(/(?:(?:^|.*;\s*)labId\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+        const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+        const Data = {
+            'labId': labId
+        }
+        fetch('http://localhost:4000/api/getLab', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(Data),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                document.getElementById('labName').innerHTML = data.labName;
+                document.getElementById('fees').innerHTML = `Fees: ${data.fees}`;
+            })
+            .catch((error) => console.error(error));
+
+        // retgister
+        function register() {
+            const url = "http://localhost:4000/api/bookLab";
+            const data = {
+                fName: document.getElementById('fName').value,
+                lName: document.getElementById('lName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                gender: document.getElementById('gender').value,
+                labId: labId,
+                token: token
+            };
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.success == true) {
+                        alert('You may have received booking confirmation message to your registered mobile number')
+                    }else{
+                        alert('Failed')
+                    }
+                })
+                .catch((error) => console.error(error));
+
+        }
+    </script>
+</body>
+
+</html>

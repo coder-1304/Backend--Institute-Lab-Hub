@@ -72,11 +72,11 @@ const registerController = {
             const token = await institute.generateAuthToken();
             institute.save();
             
-            res.cookie('jwt', token, {
-                expires: new Date(Date.now() + 50000000),   //in milliseconds 
-                httpOnly: true,
-                // secure: true
-            });
+            // res.cookie('jwt', token, {
+            //     expires: new Date(Date.now() + 50000000),   //in milliseconds 
+            //     httpOnly: true,
+            //     // secure: true
+            // });
            
 
             // //5) Send OTP
@@ -95,7 +95,13 @@ const registerController = {
 
             // 6) Send success result
 
-            res.send('Registration Successful');
+            // res.send('Registration Successful');
+            // const currInstitute = await Institute.findOne({ email: email });
+            res.json({
+                'success': true,
+                'token': token
+            })
+            res.end();
 
             // res.json({
             //     'success': true

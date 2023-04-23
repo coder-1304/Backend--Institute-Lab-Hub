@@ -16,8 +16,11 @@ const labController = {
             const instituteName = req.body.instituteName;
             const location = req.body.location;
             const available = req.body.available;
+            const availableSeats = req.body.availableSeats;
             const fees = req.body.fees;
             const country = req.body.country;
+            const date = req.body.date;
+            
 
             // Loggin received Info
             console.log("Name: " + labName);
@@ -25,8 +28,10 @@ const labController = {
             console.log("instituteName: " + instituteName);
             console.log("location: " + location);
             console.log("available: " + available);
+            console.log("availableSeats: " + availableSeats);
             console.log("fees: " + fees);
             console.log("country: " + country);
+            console.log("date: " + date);
 
             // 2) Validation
 
@@ -36,8 +41,11 @@ const labController = {
                 instituteName: Joi.string().min(3).max(30).required(),
                 location: Joi.string().min(3).max(50).required(),
                 available: Joi.string().min(3).max(40).required(),
+                availableSeats: Joi.number().required(),
                 fees: Joi.string().min(3).max(10).required(),
                 country: Joi.string().min(3).max(30).required(),
+                token: Joi.string().required(),
+                date: Joi.string().required(),
             });
 
             const { error } = registerSchema.validate(req.body);
@@ -50,6 +58,7 @@ const labController = {
             // 4) Storing to MongoDB
 
             // const hashedPassword = await bcrypt.hash(password, 10);
+            console.log('Reaching HEre ===');
 
             const lab = new Lab({
                 labName: labName,
@@ -57,12 +66,17 @@ const labController = {
                 instituteName: instituteName,
                 location: location,
                 available: available,
+                availableSeats: availableSeats,
                 fees: fees,
                 country: country,
+                date: date,
                 instituteId: req.user._id,
             });
             lab.save();
-            res.send('Lab is added Successfully');
+            // res.send('Lab is added Successfully');
+            res.json({
+                'success': true
+            })
             res.end();
 
             // res.cookie('jwt', token, {
@@ -93,9 +107,19 @@ const labController = {
     async getAllLabs(req,res,next){
         try {
             console.log('reached/.....');
-            const labs = await Lab.find({});
-            console.log(labs);
+            const labs = await Lab.find({availableSeats: { $gte: 0 } });
+            // console.log(labs);
             res.json(labs);
+            res.end();
+        } catch (error) {
+            res.send(error);
+        }
+    },
+    async getLab(req,res,next){
+        try {
+            const labId = req.body.labId;
+            let data = await Lab.findOne({_id:labId});
+            res.json(data);
             res.end();
         } catch (error) {
             res.send(error);

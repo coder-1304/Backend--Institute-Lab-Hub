@@ -19,15 +19,21 @@ const loginController = {
             const isMatch = await bcrypt.compare(password, learner.password);
             if (isMatch) {
                 const token = await learner.generateAuthToken();
-                res.cookie('jwt', token, {
-                    expires: new Date(Date.now() + 50000000),   //in milliseconds 
-                    httpOnly: true,
-                    // secure: true
+                // res.cookie('jwt', token, {
+                //     expires: new Date(Date.now() + 50000000),   //in milliseconds 
+                //     httpOnly: true,
+                //     // secure: true
+                // })
+                // res.send(`<h1>Login Success</h1>`)
+                res.json({
+                    'success': true,
+                    'token': token
                 })
-                res.send(`<h1>Login Success</h1>`)
                 res.end();
             } else {
-                res.send(`<h1>Wrong Password</h1>`)
+                res.json({
+                    'success': false
+                })
                 res.end();
             }
         } catch (error) {

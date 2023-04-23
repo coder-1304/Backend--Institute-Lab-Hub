@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institute Labs</title>
+    <style>
+        body{
+            background-color: rgb(207, 207, 207);
+        }
+        .card {
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .card p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .card button {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="card-container"></div>
+    <script>
+        const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        const data = {
+            token: token
+        }
+        fetch('http://localhost:4000/api/institute/seeMyLabs', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                const cardContainer = document.getElementById('card-container');
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    const title = document.createElement('h2');
+                    title.innerText = item.labName;
+                    card.appendChild(title);
+                    const description = document.createElement('p');
+                    description.innerText = item.description;
+                    card.appendChild(description);
+                    const institute = document.createElement('p');
+                    institute.innerText = item.instituteName;
+                    card.appendChild(institute);
+                    const location = document.createElement('p');
+                    location.innerText = item.location;
+                    card.appendChild(location);
+                    const available = document.createElement('p');
+                    available.innerText = item.available;
+                    card.appendChild(available);
+                    const date = document.createElement('p');
+                    date.innerText = `Date: ${item.date}`;
+                    card.appendChild(date);
+                    const availableSeats = document.createElement('p');
+                    availableSeats.innerText = `Available seats: ${item.availableSeats}`;
+                    card.appendChild(availableSeats);
+                    //here
+                    const bookedSeats = document.createElement('p');
+                    const bookings = item.bookings.length==undefined?0:item.bookings.length;
+                    bookedSeats.innerText = `Booked seats: ${item.bookings.length}`;
+                    card.appendChild(bookedSeats);
+                    // here
+                    const fees = document.createElement('p');
+                    fees.innerText = `Fees: ${item.fees}`;
+                    card.appendChild(fees);
+                    const button = document.createElement('button');
+                    button.innerText = 'See Booked Learners';
+                    button.addEventListener('click', () => {
+                        const selectedId = item._id;
+                        console.log(selectedId);
+                        document.cookie = `labId=${selectedId};  path=/`;
+                        window.location.href='./bookedLearners.html'
+                    });
+                    card.appendChild(button);
+                    cardContainer.appendChild(card);
+                });
+            });0
+
+    </script>
+</body>
+
+</html>

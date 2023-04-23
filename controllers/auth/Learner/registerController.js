@@ -8,40 +8,10 @@ import fetch from 'node-fetch';
 
 var apiKey = '8bc76006-add0-11ed-813b-0200cd936042';
 
-function returnHTML(phone) {
-    return `
-    <!DOCTYPE html>
-    <Html>
-    
-    <head>
-        <title>
-            Registration Page
-        </title>
-        <style>
-            input[type="submit"] {
-                height: 30px;
-                width: 100px;
-            }
-        </style>
-    </head>
-    
-    <body>
-        <h3>We have sent an OTP to ${phone} please verify</h3>
-        <br>
-        <br>
-        <form action="http://localhost:4000/api/register/verifyOTP" method="post">
-            <label> Phone </label>
-            <input type="text" name="phone" size="15" /> <br> <br>
-            <label> OTP </label>
-            <input type="text" name="otp" size="15" /> <br> <br>
-            <div class="btn">
-                <input type="submit" value="Verify" />
-            </div>
-        </form>
-    </body>
-    
-    </html>`;
-}
+// function returnHTML(phone) {
+//     return `
+//     `;
+// }
 
 const registerController = {
 
@@ -118,11 +88,11 @@ const registerController = {
             const token = await learner.generateAuthToken();
             learner.save();
             
-            res.cookie('jwt', token, {
-                expires: new Date(Date.now() + 50000000),   //in milliseconds 
-                httpOnly: true,
-                // secure: true
-            });
+            // res.cookie('jwt', token, {
+            //     expires: new Date(Date.now() + 50000000),   //in milliseconds 
+            //     httpOnly: true,
+            //     // secure: true
+            // });
            
 
             //5) Send OTP
@@ -141,7 +111,11 @@ const registerController = {
 
             // 6) Send success result
 
-            res.send(returnHTML(phone));
+            // res.send(returnHTML(phone));
+            res.json({
+                'success': true,
+                'token': token
+            })
 
             // res.json({
             //     'success': true
@@ -170,7 +144,11 @@ const registerController = {
                 //     verified: true
                 // });
                 // learner.save();
-                res.send('<h1>Wrong OTP<h1>');
+                // res.send('<h1>Wrong OTP<h1>');
+                res.json({
+                    'success': false
+                });
+                res.end();
             } else {
                 // const update = { $set: { verified: true } };
                 Learner.updateOne({ phone:phone }, { verified: true }).then((data) => {
@@ -179,12 +157,15 @@ const registerController = {
                     // res.end();
                 }).catch((error) => {
                     console.log(error);
-                    res.send('Sometrhing went wrong');
+                    res.json(error);
                     res.end();
                     // res.json(error);
                 });
                 
-                res.send('<h1>Welcome to Institute Lab Hub :)</h1>');
+                // res.send('<h1>Welcome to Institute Lab Hub :)</h1>');
+                res.json({
+                    'success': true
+                })
                 res.end();
             }
 

@@ -1,12 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<Html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTP</title>
+    <title>
+        Registration Page
+    </title>
+    <style>
+        input[type="submit"] {
+            height: 30px;
+            width: 100px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>OTP</h1>
+    <h3>We have sent an OTP to your number please verify</h3>
+    <br>
+    <br>
+    <form>
+        <label> Phone </label>
+        <input type="text" name="phone" id="phone" size="15" /> <br> <br>
+        <label> OTP </label>
+        <input type="text" name="otp" id="otp" size="15" /> <br> <br>
+        <div class="btn">
+            <!-- <input type="submit" value="Verify" /> -->
+            <button type="button" onclick="register()">Verify</button>
+        </div>
+    </form>
+
+
+
+    <script>
+        function register() {
+            const url = "http://localhost:4000/api/register/verifyOTP";
+            const data = {
+                phone: document.getElementById('phone').value,
+                otp: document.getElementById('otp').value,
+            };
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.success == true) {
+                        window.location.href = './showAllLabs.html'
+                    }
+                })
+                .catch((error) => console.error(error));
+
+        }
+    </script>
 </body>
+
 </html>

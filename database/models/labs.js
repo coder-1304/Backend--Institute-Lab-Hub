@@ -2,8 +2,8 @@
 // const mongoose = require('mongoose');
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import jwt from  'jsonwebtoken';
-import {SECRET_KEY} from '../../config/index.js'
+import jwt from 'jsonwebtoken';
+import { SECRET_KEY } from '../../config/index.js'
 // const res = require('express/lib/response');
 const labSchema = new mongoose.Schema({
     labName: {
@@ -27,6 +27,14 @@ const labSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    date: {
+        type: String,
+        require: true,
+    },
+    availableSeats: {
+        type: Number,
+        require: true,
+    },
     fees: {
         type: String,
         require: true,
@@ -35,6 +43,7 @@ const labSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    bookings: [{ type: mongoose.Schema.Types.Mixed }],
     instituteId: {
         type: String,
         require: true

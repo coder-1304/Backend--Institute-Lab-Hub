@@ -6,7 +6,7 @@ import Learner from '../database/models/learner.js';
 
 const auth = async (req,res,next)=>{
     try {
-        const token = req.cookies.jwt;  //getting the token from the cookies of the user's browser
+        const token = req.body.token;  //getting the token from the cookies of the user's browser
         const verifyUser = jwt.verify(token,"iAmShanneeAhirwarAndThisIsTheSignatureKey");
         // console.log(verifyUser);
         const user = await Learner.findOne({_id:verifyUser._id});  //getting all the information of user from the database

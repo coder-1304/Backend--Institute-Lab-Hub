@@ -44,6 +44,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true
     },
+    bookings: [{ type: mongoose.Schema.Types.Mixed }],
     tokens: [{
         token: {
             type: String,

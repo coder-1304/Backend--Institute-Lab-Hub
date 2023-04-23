@@ -9,6 +9,7 @@
         body {
             background-color: lightskyblue;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             text-align: center;
         }
@@ -17,34 +18,77 @@
             height: 50px;
             width: 150px;
         }
+        .myLabs{
+            width: 100px;
+        }
     </style>
 </head>
 
 <body>
+    <button class="myLabs" onclick="window.location.href='./instituteLabs.html'">My Labs</button>
     <br>
     <br>
-    <form action="http://localhost:4000/api/addLab" method="post">
+    <form action="http://localhost:4001/api/addLab" method="post">
         <label> Lab Name </label>
-        <input type="text" name="labName" size="15" /> <br> <br>
+        <input type="text" name="labName" size="15" id="labName" /> <br> <br>
         <label> Description </label>
-        <input type="text" name="description" size="15" /> <br> <br>
+        <input type="text" name="description" size="15" id="description"/> <br> <br>
         <label> Institute </label>
-        <input type="text" name="instituteName" size="15" /> <br> <br>
+        <input type="text" name="instituteName" size="15" id="instituteName" /> <br> <br>
         <label> Loacation </label>
-        <input type="text" name="location" size="15" /> <br> <br>
+        <input type="text" name="location" size="15" id="location" /> <br> <br>
+        <label> Date </label>
+        <input type="date" name="date" size="15" id="date" /> <br> <br>
         <label> Available Time </label>
-        <input type="text" name="available" size="15" /> <br> <br>
+        <input type="text" name="available" size="15" id="available"/> <br> <br>
+        <label> Number of available seats </label>
+        <input type="number" name="availableSeats" size="15" id="availableSeats"/> <br> <br>
         <label> Fees </label>
-        <input type="text" name="fees" size="15" /> <br> <br>
+        <input type="text" name="fees" size="15" id="fees"/> <br> <br>
 
         <label> Country </label>
-        <input type="text" name="country" size="15" /> <br> <br>
+        <input type="text" name="country" size="15" id="country" /> <br> <br>
         <br>
         <br>
         <div class="btn">
-            <input type="submit" value="Submit" />
+            <input type="button" onclick="register()" value="ADD LAB" />
+            <button type="button" onclick=" window.location.href='./showAllLabs.html'">Show all labs</button>
         </div>
     </form>
+    <br><br>
+    <script>
+        function register() {
+            const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+            const url = "http://localhost:4000/api/addLab";
+            const data = {
+                labName: document.getElementById('labName').value,
+                description: document.getElementById('description').value,
+                instituteName: document.getElementById('instituteName').value,
+                location: document.getElementById('location').value,
+                available: document.getElementById('available').value,
+                availableSeats: document.getElementById('availableSeats').value,
+                fees: document.getElementById('fees').value,
+                country: document.getElementById('country').value,
+                date: document.getElementById('date').value,
+                token: token
+            };
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.success == true) {
+                        alert('lab is added successfully')
+                    }
+                })
+                .catch((error) => console.error(error));
+        }
+    </script>
 </body>
 
 </html>

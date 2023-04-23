@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Lab Details</title>
+  <style>
+    body {
+      background-color: rgb(185, 185, 185);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      background-color: white;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
+      /* width: 70%; */
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .card p {
+      margin-bottom: 5px;
+    }
+
+    .book-btn {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      margin-right: 20px;
+    }
+
+    .dropdown-toggle {
+      padding: 10px 20px;
+      border: none;
+      background-color: #eee;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1;
+      display: none;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .show {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 10px 20px;
+      display: block;
+      text-decoration: none;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f2f2f2;
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      width: 400px;
+      height: 40px;
+      background-color: #eee;
+      border-radius: 20px;
+      padding: 0 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background-color: transparent;
+      margin-left: 10px;
+      font-size: 16px;
+    }
+
+    .search-input::placeholder {
+      color: #aaa;
+    }
+
+    .search-btn {
+      background-color: #ccc;
+      border: none;
+      color: #333;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .search-btn:hover {
+      background-color: #bbb;
+    }
+
+    .search-implement {
+      display: flex;
+
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Dropdown -->
+  <div class="search-implement">
+    <div class="dropdown">
+      <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        Dropdown Button
+      </button>
+      <div class="dropdown-menu" aria-labelledby="Search by City">
+        <a class="dropdown-item" href="#">Search by Institute</a>
+        <a class="dropdown-item" href="#">Search by Location</a>
+        <a class="dropdown-item" href="#">Search by Lab</a>
+      </div>
+    </div>
+    <div class="search-container">
+      <input type="text" id="searchField" class="search-input" placeholder="Search...">
+      <button type="submit" onclick="search()" class="search-btn">Search</button>
+    </div>
+  </div>
+
+  <!-- dropdown ends    -->
+  <br>
+
+  <button onclick="window.location.href='./learnerSeeBookedLabs.html'">See your booked Labs</button>
+  <br>
+  <div id="lab-list"></div>
+
+  <script>
+    const labList = document.getElementById("lab-list");
+
+
+    function showData(data) {
+      // Loop through data and create cards
+      document.getElementById("lab-list").innerHTML = "";
+      data.forEach((lab) => {
+
+        if (lab.availableSeats != 0) {
+          const card = document.createElement("div");
+          card.classList.add("card");
+          card.innerHTML = `
+              <h2>${lab.labName}</h2>
+              <p>${lab.description}</p>
+              <p>Institute: ${lab.instituteName}</p>
+              <p>Location: ${lab.location}</p>
+              <p>Date: ${lab.date}</p>
+              <p>Available time: ${lab.available}</p>
+              <p>Available Seats: ${lab.availableSeats}</p>
+              <p>Fees: ${lab.fees}</p>
+              <button class="book-btn" data-id="${lab._id}">Book</button>
+            `;
+          labList.appendChild(card);
+        }
+      });
+
+      // Add event listener to Book button
+      const bookButtons = document.querySelectorAll(".book-btn");
+      bookButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const labId = button.dataset.id;
+          document.cookie = `labId=${labId};  path=/`;
+          console.log(`Book button clicked for lab with ID: ${labId}`);
+          window.location.href = './bookSlot.html'
+          // bookSeat(labId);
+        });
+      });
+    }
+
+    // Fetch data from API
+    fetch("http://localhost:4000/api/getAllLabs")
+      .then((response) => response.json())
+      .then((data) => {
+        showData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching lab data:", error);
+      });
+
+    // For dropdown
+    const dropdown = document.querySelector('.dropdown');
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+    // Event listener for dropdown toggle button
+    dropdownToggle.addEventListener('click', () => {
+      dropdownMenu.classList.toggle('show');
+    });
+
+    // Event listeners for dropdown items
+    dropdownItems.forEach(item => {
+      item.addEventListener('click', () => {
+        dropdownToggle.textContent = item.textContent;
+        dropdownMenu.classList.remove('show');
+      });
+    });
+
+    // Event listener for clicking outside the dropdown menu
+    document.addEventListener('click', event => {
+      if (!dropdown.contains(event.target)) {
+        dropdownMenu.classList.remove('show');
+      }
+    });
+
+    // Search Implementation:
+
+    function search() {
+      const searchText = document.getElementById('searchField').value;
+      const searchBy = dropdownToggle.textContent;
+      console.log(searchText + '\n' + searchBy)
+      const url = 'http://localhost:4000/api/searchLab'
+      const data = {
+        "searchText": searchText,
+        "searchBy": searchBy
+      }
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          showData(data);
+        })
+        .catch((error) => console.error(error));
+    }
+
+
+  </script>
+</body>
+
+</html>
