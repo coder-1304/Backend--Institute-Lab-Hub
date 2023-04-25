@@ -3,6 +3,10 @@ import twilio from 'twilio';
 import Learner from '../../../database/models/learner.js';
 import Institute from '../../../database/models/institute.js';
 import Lab from '../../../database/models/labs.js';
+import nodemailer from 'nodemailer';
+// import Service from '../../../middlewares/service.js'
+import Service from '../../../middlewares/service.js';
+// import {  } from "../../";
 
 function generateRandomId() {
     const length = 10;
@@ -18,22 +22,40 @@ function generateRandomId() {
 }
 
 function sendMessage(studentDetails, labDetails) {
-    var message = `\nDear ${studentDetails.name}, your booking at ${labDetails.instituteName} in 
-${labDetails.location} has been confirmed for ${labDetails.labName} lab on ${labDetails.date}.
-The total fee is ₹${labDetails.fees}. Your Booking ID is ${studentDetails.bookingId}.
-Thank you for choosing. Have a great day!`
+    var message = `Dear ${studentDetails.name},
 
-    const accountSid = 'AC268b88d6bbc848c22c903a179e11844e';
-    const authToken = 'd9bfc5b9da97bce7a956e0cdbd91d1d9';
-    const client = twilio(accountSid, authToken);
+Your booking at ${labDetails.instituteName} in ${labDetails.location} has been confirmed for ${labDetails.labName} lab on ${labDetails.date}. The total fee is ₹${labDetails.fees}. Your Booking ID is ${studentDetails.bookingId}.
+    
+Thank you for choosing ${labDetails.instituteName}.
 
-    client.messages.create({
-        to: `+91${studentDetails.phone}`,
-        from: '+16206999359',
-        body: message
-    })
-        .then((message) => { return true })
-        .catch((error) => console.error(`Error sending SMS: ${error.message}`));
+Regards,
+Institute Lab Hub
+    `
+
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: Service.user,
+            pass: Service.pass
+        }
+    });
+
+    const mailOptions = {
+        from: 'shanneeahirwar20174@acropolis.in',
+        to: studentDetails.email,
+        subject: 'Booking Confirmation',
+        text: message
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
 
 }
 
@@ -54,7 +76,7 @@ const bookingsController = {
 
 
             const lab = await Lab.findOne({ _id: labId });
-            if(lab.availableSeats == 0){
+            if (lab.availableSeats == 0) {
                 res.json({
                     'available': false
                 });
@@ -70,7 +92,7 @@ const bookingsController = {
             console.log('Got lab:\n');
             console.log(lab);
             // const bookingId = await generateRandomId;
-            const bookingId =  generateRandomId();
+            const bookingId = generateRandomId();
             const studentDetails = {
                 'name': fName + ' ' + lName,
                 'email': email,
@@ -109,11 +131,11 @@ const bookingsController = {
                 res.end();
             });
             // Updating Lab
-            const currLab = await Lab.findOne({_id:labId});
+            const currLab = await Lab.findOne({ _id: labId });
             let labBookings = currLab.bookings;
-            let currAvailableSeats = currLab.availableSeats-1;
+            let currAvailableSeats = currLab.availableSeats - 1;
             labBookings.push(studentDetails);
-            const labUpdate = { $set: { bookings: labBookings, availableSeats: currAvailableSeats  } };
+            const labUpdate = { $set: { bookings: labBookings, availableSeats: currAvailableSeats } };
             await Lab.updateOne({ _id: labId }, labUpdate).then((data) => {
                 console.log('Updated =======>');
             }).catch((error) => {
