@@ -22,6 +22,7 @@ router.post('/learner/seeBookedLabs',auth,learnerLabsController.learnerLabs);
 // Institute
 router.post('/instituteRegister', instituteRegisterController.register);
 router.post('/instituteLogin', instituteLoginController.login);
+router.post('/institute/myInfo',instituteAuth, instituteLabsController.myInfo);
 router.post('/institute/seeMyLabs',instituteAuth, instituteLabsController.instituteLabs);
 router.post('/institute/labs/bookedLearners',instituteAuth, instituteLabsController.bookedLearners);
 

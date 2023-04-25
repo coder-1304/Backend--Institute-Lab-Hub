@@ -33,6 +33,17 @@ const instituteLabsController = {
         }
         // res.end();
     },
+    async myInfo(req, res, next) {
+        try {
+            res.json(req.user);
+            res.end();
+        } catch (error) {
+            console.log(error);
+            res.json(error);
+            res.end();
+        }
+        // res.end();
+    },
 }
 
 export default instituteLabsController;
